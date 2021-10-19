@@ -3,14 +3,14 @@ Generates a Proxy for clasess and objects and uses listeners to warn about any c
 
 ## Install
 ```cli
-  npm intall @sio/proxyme
+  npm intall proxyme-js
 ```
 ## Require
 
   ```javascript
-    const ProxyMe = require("@sio/proxyMe");
+    const ProxyMe = require("proxyme-js");
     //or
-    import ProxyMe from "@sio/proxyMe";
+    import ProxyMe from "proxyme-js";
   ```
 ## Use with objects
 

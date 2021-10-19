@@ -1,5 +1,5 @@
 {
-  "name": "@sio/proxyme",
+  "name": "proxyme-js",
   "version": "1.0.0",
   "description": "Generates a new Proxy that adds listeners for changes in objects",
   "main": "ProxyMe.js",
