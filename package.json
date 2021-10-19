@@ -1,0 +1,24 @@
+{
+  "name": "@sio/proxyme",
+  "version": "1.0.0",
+  "description": "Generates a new Proxy that adds listeners for changes in objects",
+  "main": "ProxyMe.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/empirreamm/ProxyMe.git"
+  },
+  "keywords": [
+    "Proxy",
+    "changes",
+    "objects",
+    "classes",
+    "constructor",
+    "listener"
+  ],
+  "author": "Siorbtia",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/empirreamm/ProxyMe/issues"
+  },
+  "homepage": "https://github.com/empirreamm/ProxyMe#readme"
+}
