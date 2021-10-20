@@ -6,21 +6,19 @@ Generates a Proxy for clasess and objects and uses listeners to warn about any c
   npm intall proxyme-js
 ```
 ## Require
-
+  For NodeJS in module or Browser:
   ```javascript
-    const ProxyMe = require("proxyme-js");
-    //or
     import ProxyMe from "proxyme-js";
   ```
 ## Use with objects
 
 ```javascript
   let objPrueba={
-    a="A",
-    b="B",
-    subLevel={
-      a="A2",
-      b="B2"
+    a:"A",
+    b:"B",
+    subLevel:{
+      a:"A2",
+      b:"B2"
     }
   }
 
