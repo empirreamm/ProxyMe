@@ -143,6 +143,7 @@ function proxyMe(data,name=null){
         }
         /**Makes a proxy of the value if it is an object and is not already a proxy */
         if(obj[key] && typeof value=="object" && !obj.propertyIsEnumerable(key) && !value.isProxy){
+          console.log()
           obj[key]=value;
           return value;
         }
@@ -170,9 +171,7 @@ function proxyMe(data,name=null){
         let oldVal=Reflect.get(obj,key,receiver);
         let setVal=Reflect.set(obj,key,value,receiver);
         /**Emits a set action */
-        if(Object.propertyIsEnumerable(key)){
-          obj.__emit("set",obj,key,value,oldVal,receiver);
-        }
+        obj.__emit("set",obj,key,value,oldVal,receiver);
         /**Returns the setVal */
         return setVal;
       }
