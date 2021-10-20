@@ -1,6 +1,6 @@
 {
   "name": "proxyme-js",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Generates a new Proxy that adds listeners for changes in objects",
   "main": "ProxyMe.js",
   "repository": {

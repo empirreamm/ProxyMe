@@ -60,43 +60,22 @@ function proxyMe(data,name=null){
   );
   return new Proxy(data,
     {
-      set:(obj,key,value,receiver)=>{
-        /**If key starts with "__" DONT check */
-        if(key.startsWith("__")){
-          obj[key]=value;
-          return true;
+      construct(obj, argArray, newTarget){
+        let res=Reflect.construct(obj, argArray, newTarget);
+        let prox=proxyMe(res);
+        if(typeof prox.__onProxied=="function"){
+          prox.__onProxied();
         }
-        /**Makes a proxy of the value if it is an object and is not already a proxy */
-        if(typeof value=="object" && !value.isProxy){
-          value=proxyMe(key,value);
+        return prox;
+      },
+      deleteProperty(obj, key) {
+        if (key in obj) {
+          let oldVal=obj[key];
+          let res=delete obj[key];
+          /**Send a undefined in the new value */
+          obj.__emit("set",obj,key,undefined,oldVal,undefined);
+          return res;
         }
-        /**If key has periods check if it already exists as a name or starts to generate new sublevels */
-        if(!obj[key]){
-          if(/\./.exec(key)){
-            let parts=key.split(".");
-            let last=parts.pop();
-            let current=obj;
-            /**Creates the whole sublevel */
-            for(let part of parts){
-              if(current[part]){
-                current=current[part];
-              }else{
-                current[part]={};
-                current=current[part];
-              }
-            }
-            let oldVal=Reflect.get(current,last,receiver);
-            let setVal=Reflect.set(current,last,value);
-            return setVal;
-          }
-        }
-        ///*Gets the current value and updates the value */
-        let oldVal=Reflect.get(obj,key,receiver);
-        let setVal=Reflect.set(obj,key,value,receiver);
-        /**Emits a set action */
-        obj.__emit("set",obj,key,value,oldVal,receiver);
-        /**Returns the setVal */
-        return setVal;
       },
       get:(obj,key,receiver)=>{
         let value=obj[key];
@@ -156,18 +135,43 @@ function proxyMe(data,name=null){
         /**Gets the current value to return */
         return Reflect.get(obj,key,receiver);
       },
-      construct(obj, argArray, newTarget){
-        let res=Reflect.construct(obj, argArray, newTarget);
-        return proxyMe(res);
-      },
-      deleteProperty(obj, key) {
-        if (key in obj) {
-          let oldVal=obj[key];
-          let res=delete obj[key];
-          /**Send a undefined in the new value */
-          obj.__emit("set",obj,key,undefined,oldVal,undefined);
-          return res;
+      set:(obj,key,value,receiver)=>{
+        /**If key starts with "__" DONT check */
+        if(key.startsWith("__")){
+          obj[key]=value;
+          return true;
         }
+        /**Makes a proxy of the value if it is an object and is not already a proxy */
+        if(typeof value=="object" && !value.isProxy){
+          value=proxyMe(key,value);
+        }
+        /**If key has periods check if it already exists as a name or starts to generate new sublevels */
+        if(!obj[key]){
+          if(/\./.exec(key)){
+            let parts=key.split(".");
+            let last=parts.pop();
+            let current=obj;
+            /**Creates the whole sublevel */
+            for(let part of parts){
+              if(current[part]){
+                current=current[part];
+              }else{
+                current[part]={};
+                current=current[part];
+              }
+            }
+            let oldVal=Reflect.get(current,last,receiver);
+            let setVal=Reflect.set(current,last,value);
+            return setVal;
+          }
+        }
+        ///*Gets the current value and updates the value */
+        let oldVal=Reflect.get(obj,key,receiver);
+        let setVal=Reflect.set(obj,key,value,receiver);
+        /**Emits a set action */
+        obj.__emit("set",obj,key,value,oldVal,receiver);
+        /**Returns the setVal */
+        return setVal;
       }
     }
   );

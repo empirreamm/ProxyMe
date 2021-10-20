@@ -127,6 +127,14 @@ But we can extend them:
       this.a="changeA A";
       this.secondLevel.a="changeA A2";
     }
+    //You can assign the listeners inside the constructor class with the function __onProxied()
+    __onProxied(){
+      this.on("set",
+        ()=>{
+          console.log("From A __onProxied set listener");
+        }
+      );
+    }
   }
   let AProxied=ProxyMe(A);
 
@@ -153,6 +161,8 @@ But we can extend them:
   BProxied.a="New A";
 
   /* Console
+      From A __onProxied set listener
+
       Setted a
         Old Value:  B->A
         New Value:  New A
@@ -163,6 +173,8 @@ But we can extend them:
  BProxied.changeA("New Custom A");
 
  /* Console
+      From A __onProxied set listener
+
       Setted byFunction: changeA
         Old Value:  {"a":"New A","secondLevel":{"a":"B->A2"},"b":"B"}
         New Value:  {"a":"changeA A","secondLevel":{"a":"changeA A2"},"b":"B"}  
