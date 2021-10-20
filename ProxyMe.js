@@ -16,7 +16,9 @@ function proxyMe(data,name=null){
           prox.on("get",(obj,key,value,receiver)=>{
             let name=obj.__name;
             let subName=key;
-            this.__emit("get",this,`${name}.${subName}`,value,receiver);
+            try{
+              this.__emit("get",this,`${name}.${subName}`,value,receiver);
+            }catch(err){}
           })
           return prox;
         }
