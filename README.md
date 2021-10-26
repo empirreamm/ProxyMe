@@ -22,9 +22,9 @@ Generates a Proxy for clasess and objects and uses listeners to warn about any c
     }
   }
 
-let proxied=ProxyMe(objPrueba);
+  let proxied=ProxyMe(objPrueba);
   proxied.on("set",
-    (object,prop,newVal,oldVal,receiver)=>{
+    (obj,prop,newVal,oldVal,receiver)=>{
       console.group(`Setted ${prop}`);
       console.log("Old Value: ",oldVal);
       console.log("New Value: ",newVal);
@@ -34,29 +34,31 @@ let proxied=ProxyMe(objPrueba);
     }
   );
 
-proxied.a="New a";
+  proxied.a="New a";
 
-/* Console
-        Setted a
-          Old Value:  A
-          New Value:  New A
-          Object: { a: 'New A', b: 'B', subLevel: { a: 'A2', b: 'B2' } }  
-          Receiver: { a: 'New A', b: 'B', subLevel: { a: 'A2', b: 'B2' } }
-    */
+  /* Console
+    Setted a
+      Old Value:  A
+      New Value:  New A
+      Object: { a: 'New A', b: 'B', subLevel: { a: 'A2', b: 'B2' } }  
+      Receiver: { a: 'New A', b: 'B', subLevel: { a: 'A2', b: 'B2' } }
+  */
 
-proxied.subLevel.a="New A2";
+  proxied.subLevel.a="New A2";
 
-    /* Console
-        Setted subLevel.a
-          Old Value:  A2
-          New Value:  New A2
-          Object: { a: 'New A', b: 'B', subLevel: { a: 'New A2', b: 'B2' } }
-          Receiver: { a: 'New A2', b: 'B2' }
-    */
+  /* Console
+    Setted subLevel.a
+      Old Value:  A2
+      New Value:  New A2
+      Object: { a: 'New A', b: 'B', subLevel: { a: 'New A2', b: 'B2' } }
+      Receiver: { a: 'New A2', b: 'B2' }
+  */
   
 ```
 
 If the object is changed by a function inside the object the prop value is going to be: "byFunction: ${functionName}" and all the individual changes will be discarded. (This is because the addition of this functionality can make the code so much bigger and more complex to debug).
+
+
 ## Access sublevel object with string
 
 Continuing with previous example.
@@ -66,7 +68,7 @@ In this example it's interesting to note that assigning value
 ```javascript 
   proxied["subLevel.a"]="New new A2";
 
-/* Console
+  /* Console
       Setted subLevel.a
         Old Value:  New A2
         New Value:  New new A2
@@ -78,6 +80,31 @@ In this example it's interesting to note that assigning value
 
   /* Console
       New new A2
+  */
+```
+
+
+## Cancel Set Action
+
+Continuing with previous example.
+
+The obj in the proxy has a hidden value "__cancel" such that if it is returned from the listener will cancel the action (Specially used for the set action).
+
+```javascript 
+  proxied.on("set",(obj,prop,newVal,oldVal,receiver)=>{
+    if(/b$/.exec(prop)){
+      console.log(`Unable to modify ${prop}`);
+      return "#cancel";
+    }
+  });
+  proxied.b="This value should not be changed";
+  proxied.subLevel.b="This value neither changes";
+  proxied.a="I should be modified";
+  console.log(proxied);
+  /* Console
+      Unable to modify b
+      Unable to modify subLevel.b
+      { a: 'I should be modified', b: 'B', subLevel: { a: 'A2', b: 'B2' } }
   */
 ```
 ## Proxy Class

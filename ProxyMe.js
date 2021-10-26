@@ -11,7 +11,7 @@ function proxyMe(data,name=null){
           prox.on("set",(obj,key,value,oldVal,receiver)=>{
             let name=obj.__name;
             let subName=key;
-            this.__emit("set",this,`${name}.${subName}`,value,oldVal,receiver);
+            return this.__emit("set",this,`${name}.${subName}`,value,oldVal,receiver);
           });
           prox.on("get",(obj,key,value,receiver)=>{
             let name=obj.__name;
@@ -35,9 +35,12 @@ function proxyMe(data,name=null){
           /**Iterate over al listeners of the name if exists */
           if(Array.isArray(this.__listeners[name])){
             for(let callback of this.__listeners[name]){
-              callback(...args);
+              if(callback(...args)=="#cancel"){
+                return "#cancel";
+              }
             }
           }
+          return true;
         }
       },
       on:{
@@ -145,7 +148,6 @@ function proxyMe(data,name=null){
         }
         /**Makes a proxy of the value if it is an object and is not already a proxy */
         if(obj[key] && typeof value=="object" && !obj.propertyIsEnumerable(key) && !value.isProxy){
-          console.log()
           obj[key]=value;
           return value;
         }
@@ -173,7 +175,10 @@ function proxyMe(data,name=null){
         let oldVal=Reflect.get(obj,key,receiver);
         let setVal=Reflect.set(obj,key,value,receiver);
         /**Emits a set action */
-        obj.__emit("set",obj,key,value,oldVal,receiver);
+        let ok=obj.__emit("set",obj,key,value,oldVal,receiver);
+        if(ok==="#cancel"){
+          Reflect.set(obj,key,oldVal,receiver);
+        }
         /**Returns the setVal */
         return setVal;
       }
