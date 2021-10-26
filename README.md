@@ -88,7 +88,7 @@ In this example it's interesting to note that assigning value
 
 Continuing with previous example.
 
-The obj in the proxy has a hidden value "__cancel" such that if it is returned from the listener will cancel the action (Specially used for the set action).
+If the set listener returns a string "#cancel" the set action will be canceled and the element will matain the oldVal.
 
 ```javascript 
   proxied.on("set",(obj,prop,newVal,oldVal,receiver)=>{
